@@ -6,13 +6,13 @@
 
 ![lakes-icons.png](./images/lakes-icons.png)
 
-[lakes-icons-visual.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/lakes-icons-visual.png)
+![lakes-icons-visual.png](./images/lakes-icons-visual.png)
 
 第二个截图把布局可视化了，显示了一个包括三列的行，每一列包括一个图标和一个文字。
 
 下面是这个UI的控件树：
 
-[sample-flutter-layout.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/sample-flutter-layout.png)
+![sample-flutter-layout.png](./images/sample-flutter-layout.png)
 
 上图的大部分应该都如你预期，但是你可能会对标记为粉红色的`container`感到疑惑。容器是一个可以允许你定制化它的子控件的控件。当你想要添`padding`、`margins`、`borders`或者背景颜色等特性时，就需要使用容器控件。
 
@@ -131,11 +131,11 @@ class MyApp extends StatelessWidget {
 
 这个布局被组织为一行，行控件包括两个子控件：一个位于左侧的列控件，以及位于右侧的图片控件。
 
-[pavlova-diagram.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/pavlova-diagram.png)
+![pavlova-diagram.png](./images/pavlova-diagram.png)
 
 位于左侧的列控件又由内嵌的行和列组成。
 
-[pavlova-left-column-diagram.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/pavlova-left-column-diagram.png)
+![pavlova-left-column-diagram.png](./images/pavlova-left-column-diagram.png)
 
 
 > 注意：行和列控件是水平和垂直布局的基础控件——这些底层的控件允许最大化的自定义。`Flutter`同时也提供了特化的，高层级的控件。比如，除了行控件，你可能更倾向于`ListTile`控件，后者带有前缀和后缀的图标，以及最多三行文字等属性；除了列控件，你可能更倾向于`ListView`控件，一个当列的内容溢出屏幕可以自动滚动的控件。
@@ -144,7 +144,7 @@ class MyApp extends StatelessWidget {
 
 你可以使用`mainAxisAlignment`和`crossAxisAlignment`属性来控制行和列控件如何对齐它们内部的子控件。对于行控件来说，`main axis`是水平的，`cross axis`是垂直的。对于列控件来说，`main axis`是垂直的，`cross axis`是水平的。
 
-[row-diagram.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/row-diagram.png)
+![row-diagram.png](./images/row-diagram.png)
 
 `mainAxisAlignment`和`CrossAxisAlignmeng`提供了各种常量来控制对齐。
 
@@ -163,7 +163,7 @@ Row(
 );
 ```
 
-[row-spaceevenly-visual.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/row-spaceevenly-visual.png)
+![row-spaceevenly-visual.png](./images/row-spaceevenly-visual.png)
 
 列布局和行布局的作用方式相同。下面的例子展示了排成一列的三个图片，每个都是100像素高。绘制区域的高度大于300个像素，因此设置`main axis`为`spaceEvenly`可以把多余的控件均匀地分配到图片之间、图片顶部以及图片底部。
 
@@ -177,13 +177,13 @@ Column(
   ],
 );
 ```
-[column-visual.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/column-visual.png)
+![column-visual.png](./images/column-visual.png)
 
 ## Sizing widgets
 
 当一个布局大小超过了设备大小，超过的边上会出现一个黄黑相间的条带纹理。下面是一个行宽度太大的例子：
 
-[layout-too-large.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/layout-too-large.png)
+![layout-too-large.png](./images/layout-too-large.png)
 
 控件可以使用`Expanded`控件来缩放到行或列控件中。为了修复上面的例子中相对于绘制区域行太宽的问题，可以把每个图片包裹在一个`Expanded`控件内部：
 
@@ -203,7 +203,7 @@ Row(
   ],
 );
 ```
-[row-expanded-2-visual.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/row-expanded-2-visual.png)
+![row-expanded-2-visual.png](./images/row-expanded-2-visual.png)
 
 也许你想要一个控件占据的空间是相邻控件的两倍，那么可以使用`Expanded`控件的`flex`属性，对于每个子控件，`flex`的数值决定了它占据控件的大小。默认的大小为1.下面的代码设置中间的图片的`flex factor`为2:
 
@@ -225,7 +225,7 @@ Row(
 );`
 ```
 
-[row-expanded-visual.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/row-expanded-visual.png)
+![row-expanded-visual.png](./images/row-expanded-visual.png)
 
 ## Packing widgets
 
@@ -244,20 +244,20 @@ Row(
 )
 ```
 
-[packed.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/packed.png)
+![packed.png](./images/packed.png)
 
 
 ## Nesting rows and columns
 
 布局框架允许在行和列控件中内嵌行和列控件，内嵌的深度是任意的。下面看一下下图中红框里的布局的代码：
 
-[pavlova-large-annotated.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/pavlova-large-annotated.png)
+![pavlova-large-annotated.png](./images/pavlova-large-annotated.png)
 
 红框的区域使用两个行控件进行实现。评分行包含五个星星以及评价数量。图标行包括三个列控件，每个列控件又由图标和文字组成。
 
 下面是评分行的控件树：
 
-[widget-tree-pavlova-rating-row.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/widget-tree-pavlova-rating-row.png)
+![widget-tree-pavlova-rating-row.png](./images/widget-tree-pavlova-rating-row.png)
 
 
 `ratings`变量创建了一个行控件，包含了一个包含5个星星图标的更小的行，以及一个文字控件：
@@ -298,7 +298,7 @@ final ratings = Container(
 
 位于评分行下面的图标行，包括3列，每一列包含一个图标以及两行文字，下面是图标行的控件树：
 
-[widget-tree-pavlova-icon-row.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/widget-tree-pavlova-icon-row.png)
+![widget-tree-pavlova-icon-row.png](./images/widget-tree-pavlova-icon-row.png)
 
 `iconList`变量定义了图标行：
 
@@ -408,7 +408,7 @@ body: Center(
 * 改变背景颜色或背景图片
 * 包含一个单独的子控件，这个子控件可以是行，列甚至是一个控件树的根节点
 
-[margin-padding-border.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/margin-padding-border.png)
+![margin-padding-border.png](./images/margin-padding-border.png)
 
 ##### 例子
 
@@ -427,7 +427,7 @@ Widget _buildImagecolumn() => Container(
   ),
 );
 ```
-[container.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/container.png)
+![container.png](./images/container.png)
 
 一个容器同时也用于每个图片上，去添加一个圆角矩形和`margins`:
 
@@ -465,7 +465,7 @@ Widget _buildImageRow(int imageIndex) => Row(
 
 ##### Examples
 
-[gridview-extent.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/gridview-extent.png)
+![gridview-extent.png](./images/gridview-extent.png)
 
 ```dart
 Widget _buildGrid() => GridView.extent(
@@ -497,11 +497,11 @@ List<Container> _buildGridTileList(int count) => List.generate(
 
 ##### Examples
 
-[listview.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/listview.png)
+![listview.png](./images/listview.png)
 
 上图使用`ListView`来展示营业地点，营业地点是用`ListTile`展示的。一个`Divider`控件用来分隔开剧院和餐馆。
 
-[listview-flutter-gallery.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/listview-flutter-gallery.png)
+![listview-flutter-gallery.png](./images/listview-flutter-gallery.png)
 
 上图使用`ListView`来展示`Material Design`的调色板。
 
@@ -551,11 +551,11 @@ ListTile _tile(String title, String subtitle, IconData icon) => ListTile(
 
 ##### Examples
 
-[stack.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/stack.png)
+![stack.png](./images/stack.png)
 
 使用栈控件将一个容器控件（在灰色背景中展示文字）叠放在一个圆形的个人图片上。栈控件使用`alignment`属性来指定文字的偏移。
 
-[stack-flutter-gallery.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/stack-flutter-gallery.png)
+![stack-flutter-gallery.png](./images/stack-flutter-gallery.png)
 
 上面的例子使用栈控件将一个渐变应用到图片的上方，使得工具栏可以和图片分开。
 
@@ -600,7 +600,7 @@ Wdiget _buildStack() => Stack(
 
 ##### Examples
 
-[card.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/card.png)
+![card.png](./images/card.png)
 
 上面的卡片控件包含3个`ListTile`控件，并通过`SizedBox`控件进行包裹。
 
@@ -651,6 +651,6 @@ Widget _buildCard() => SizedBox(
 
 ##### Examples
 
-[card.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/card.png)
+![card.png](./images/card.png)
 
 上面的卡片控件包含3个`ListTile`控件，并通过`SizedBox`控件进行包裹。
