@@ -4,7 +4,7 @@
 
 你通过创建一个组合多个控件的布局来建立一个更复杂的控件。比如，下面的截图显示了3个图标，每个图标下面有一个文字。
 
-[lakes-icons.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/lakes-icons.png)
+![lakes-icons.png](./images/lakes-icons.png)
 
 [lakes-icons-visual.png](https://github.com/cartosquare/hello-flutter/blob/master/building-layouts/images/lakes-icons-visual.png)
 
