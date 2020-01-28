@@ -1,5 +1,4 @@
-# Adding interactivity to your Flutter app <!-- omit in toc -->
-
+# Adding interactivity to your Flutter app  <!-- omit in toc -->
 ## 目录 <!-- omit in toc -->
 - [Stateful and stateless widgets](#stateful-and-stateless-widgets)
 - [Creating a stateful widget](#creating-a-stateful-widget)
@@ -25,7 +24,7 @@
 
 当应用程序第一次启动的时候，星星是红色实心的，显示这个湖之前被人点过赞。星星右侧的数字显示了41个人对这个湖点过赞。在完成了这个教程之后，点击星星能够移除点赞状态，把实心星星改为只带外边线的星星，并且右侧的数字减一。再次点击这个星星可以重新点赞，星星又会变为实心红色，并且右侧的数字加一。
 
-![favorited-not-favorited.png](./images/favorited-not-favorited.png)
+![favorited-not-favorited.png](./images/favorited-notgit -favorited.png)
 
 为了完成这个功能，你需要创建一个单独的自定义的控件，包括星星和点赞计数。当然星星和点赞计数也都是控件。点击星星控件会同时改变这两个控件的状态，所以这个单独的自定义控件可以管理星星和点赞计数这两个控件。
 
