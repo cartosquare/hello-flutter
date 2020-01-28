@@ -1,4 +1,46 @@
-## Layouts in Flutter
+## Layouts in Flutter <!-- omit in toc -->
+- [Lay out a widget](#lay-out-a-widget)
+    - [第一步，选择一个布局控件](#第一步选择一个布局控件)
+    - [第二步，创建一个展示控件](#第二步创建一个展示控件)
+    - [第三步，把展示控件添加到布局控件中](#第三步把展示控件添加到布局控件中)
+    - [第四步，添加布局控件到页面中](#第四步添加布局控件到页面中)
+      - [Material apps](#material-apps)
+      - [Non-Material apps](#non-material-apps)
+- [Lay out multiple widgets vertically and horizontally](#lay-out-multiple-widgets-vertically-and-horizontally)
+- [Aligning widgets](#aligning-widgets)
+- [Sizing widgets](#sizing-widgets)
+- [Packing widgets](#packing-widgets)
+- [Nesting rows and columns](#nesting-rows-and-columns)
+- [Common layout widgets](#common-layout-widgets)
+    - [Standard widgets](#standard-widgets)
+    - [Material widgets](#material-widgets)
+    - [Container](#container)
+      - [Summary](#summary)
+      - [Examples](#examples)
+    - [GridView](#gridview)
+      - [Summary](#summary-1)
+      - [Examples](#examples-1)
+    - [ListView](#listview)
+      - [Summary](#summary-2)
+      - [Examples](#examples-2)
+    - [Stack](#stack)
+      - [Summary](#summary-3)
+      - [Examples](#examples-3)
+    - [Card](#card)
+      - [Summary](#summary-4)
+      - [Examples](#examples-4)
+    - [ListTile](#listtile)
+      - [Summary](#summary-5)
+      - [Examples](#examples-5)
+- [Tutorial](#tutorial)
+    - [第0步：创建程序基础代码库](#第0步创建程序基础代码库)
+    - [第1步：绘制布局](#第1步绘制布局)
+    - [第2步：实现标题行](#第2步实现标题行)
+    - [第3步： 实现按钮行](#第3步-实现按钮行)
+    - [第4步，实现文本栏](#第4步实现文本栏)
+    - [第5步，实现图片栏](#第5步实现图片栏)
+    - [第6步，最后的改变](#第6步最后的改变)
+
 
 `Flutter`布局机制的核心是控件。在`Flutter`中，几乎所有的东西都是控件——布局模型也是控件。你在`Flutter`应用程序里看到的图片、图标和文字都是控件。不仅如此，像行、列以及网格这些看不到的东西也都是控件，这些控件用来来排布、约束以及对齐其它看得到的控件。
 
@@ -403,14 +445,14 @@ body: Center(
 
 #### Container
 
-##### 总结
+##### Summary
 * 添加`padding,margins,borders`
 * 改变背景颜色或背景图片
 * 包含一个单独的子控件，这个子控件可以是行，列甚至是一个控件树的根节点
 
 ![margin-padding-border.png](./images/margin-padding-border.png)
 
-##### 例子
+##### Examples
 
 下面的布局包含一个列控件，列控件由两个行控件组成，每个行控件又由两个图片组成。一个容器控件用来改变背景颜色为浅灰色。
 
