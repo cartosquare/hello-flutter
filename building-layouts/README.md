@@ -1,8 +1,8 @@
 ## Layouts in Flutter
 
-`Flutter`布局机制的核心是控件。在`Flutter`中，几乎所有的东西都是控件——布局模型也是控件。你在`Flutter`应用程序里看到的图片、图标和文字都是控件。但是你看不到的也都是控件，像行、列以及网格，这些用来排布、约束以及对其那些看得到的控件。
+`Flutter`布局机制的核心是控件。在`Flutter`中，几乎所有的东西都是控件——布局模型也是控件。你在`Flutter`应用程序里看到的图片、图标和文字都是控件。不仅如此，像行、列以及网格这些看不到的东西也都是控件，这些控件用来来排布、约束以及对齐其它看得到的控件。
 
-你通过创建一个组合多个控件的布局来建立一个更复杂的控件。比如，下面的截图显示了3个图标，每个图标下面有一个文字。
+你可以通过创建一个组合多个控件的布局来建立一个更复杂的控件。比如，下面的第一个截图显示了3个图标，每个图标下面有一个文字。
 
 ![lakes-icons.png](./images/lakes-icons.png)
 
@@ -14,7 +14,7 @@
 
 ![sample-flutter-layout.png](./images/sample-flutter-layout.png)
 
-上图的大部分应该都如你预期，但是你可能会对标记为粉红色的`container`感到疑惑。容器是一个可以允许你定制化它的子控件的控件。当你想要添`padding`、`margins`、`borders`或者背景颜色等特性时，就需要使用容器控件。
+上图中标记为粉红色的`container`控件可以允许对子控件进行定制。当你想要添`padding`、`margins`、`borders`或者`background color`等特性时，就需要使用容器控件。
 
 在这个例子中，每个文字控件被放置于容器控件中，以添加`margins`。每个行控件也被放置于容器中，以在行的周围添加`padding`。
 
@@ -26,7 +26,7 @@
 
 #### 第一步，选择一个布局控件
 
-根据你想如何对齐或者约束展示控件去选取一个布局控件，这个例子使用`Center`控件，这个控件可以把内容在水平和垂直方向上居中。
+根据你想如何对齐或者约束控件去选取一个布局控件，这个例子使用`Center`控件，这个控件可以把内容在水平和垂直方向上居中。
 
 #### 第二步，创建一个展示控件
 
@@ -76,7 +76,7 @@ Center(
 
 ##### Material apps
 
-对于`Material`程序，你可以使用`Scaffold`这个控件；脚手架控件提供了一个默认的`banner`(标题）、`background color`，并且有可以添加`drawers`（抽屉）、`snack bars`以及`bottom sheets`的`API`。现在你可以把`center`控件直接添加到主页的`body`属性上。
+对于`Material`程序，你可以使用`Scaffold`（脚手架）这个控件；脚手架控件提供了一个默认的`banner`(标题）、`background color`，并且提供添加`drawers`（抽屉）、`snack bars`以及`bottom sheets`的`API`。现在你可以把`center`控件直接添加到主页的`body`属性上。
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -138,11 +138,11 @@ class MyApp extends StatelessWidget {
 ![pavlova-left-column-diagram.png](./images/pavlova-left-column-diagram.png)
 
 
-> 注意：行和列控件是水平和垂直布局的基础控件——这些底层的控件允许最大化的自定义。`Flutter`同时也提供了特化的，高层级的控件。比如，除了行控件，你可能更倾向于`ListTile`控件，后者带有前缀和后缀的图标，以及最多三行文字等属性；除了列控件，你可能更倾向于`ListView`控件，一个当列的内容溢出屏幕可以自动滚动的控件。
+> 注意：行和列控件是水平和垂直布局的基础控件——这些底层的控件允许最大化的自定义。`Flutter`同时也提供了特化的，高层级的控件。比如，除了行控件，你可能更倾向于`ListTile`控件，后者带有前缀和后缀的图标，以及文字（最多三行）等属性；除了列控件，你可能更倾向于`ListView`控件，一个当列的内容溢出屏幕可以自动滚动的控件。
 
 ## Aligning widgets
 
-你可以使用`mainAxisAlignment`和`crossAxisAlignment`属性来控制行和列控件如何对齐它们内部的子控件。对于行控件来说，`main axis`是水平的，`cross axis`是垂直的。对于列控件来说，`main axis`是垂直的，`cross axis`是水平的。
+你可以使用`mainAxisAlignment`和`crossAxisAlignment`属性来控制行和列控件如何对齐它们内部的子控件。对于行控件来说，`main axis`是水平的，`crwoss axis`是垂直的。对于列控件来说，`main axis`是垂直的，`cross axis`是水平的。
 
 ![row-diagram.png](./images/row-diagram.png)
 
