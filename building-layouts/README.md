@@ -654,3 +654,286 @@ Widget _buildCard() => SizedBox(
 ![card.png](./images/card.png)
 
 上面的卡片控件包含3个`ListTile`控件，并通过`SizedBox`控件进行包裹。
+
+## Tutorial
+
+下面通过一个完整的例子来展示如何进行布局，下面是我们要建立的应用程序：
+
+![lakes.jpg](./images/lakes.jpg)
+
+#### 第0步：创建程序基础代码库
+
+1. 创建一个基础的`Hello World`应用程序
+
+```bash
+flutter create tutorial
+```
+
+2. 建立一个最简单的`Flutter`程序
+
+编辑`main.dart`文件：
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter layout Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter layout demo'),
+        ),
+      ),
+    );
+  }
+}
+```
+#### 第1步：绘制布局
+
+首先我们需要把局部分解为基础的元素：
+
+* 识别哪些是行和列
+* 布局是否包括一个网格？
+* 是否有互相覆盖的元素？
+* 界面是否需要`tab`?
+* 找到哪些区域需要`alignment`，`padding`或者`borders`
+
+首先，找到那些较大的元素。在这个例子里，四个元素元素构成了一列：一个图片、两行以及一个文字块(下图中红框标注的）。
+
+![lakes-column-elts.png](./images/lakes-column-elts.png)
+
+下一步，对每行进行图表分解。第一行标题栏，有三个子控件：一列文字，一个图标以及一个数字。其中第一个子控件，列控件，包含两行文字，这个列控件占据了绝大部分行空间，因此需要包裹在`Expanded`控件中。
+
+![title-section-parts.png](./images/title-section-parts.png)
+
+第二行按钮栏，也有三个子控件：每个子控件都是一个列控件，包括一个图标和一行文字。
+
+![button-section-diagram.png](./images/button-section-diagram.png)
+
+一旦局部被绘制为图表，就很容易从底往上去实现。为了最小化布局嵌套带来的视觉混乱，可以把一些实现放在变量和函数中。
+
+#### 第2步：实现标题行
+
+第一步、先实现左侧列控件中的标题行。在`MyApp`类的`buil()`函数中添加如下的代码：
+
+```dart
+  Widget build(BuildContext context) {
+    // title section
+    Widget titleSection = Container(
+      padding: const EdgeInsets.all(32),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            /*1*/
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                /*2*/
+                Container(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    'Oeschinen Lake Campground',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  'Kandersteg, Switzerland',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          /*3*/
+          Icon(
+            Icons.star,
+            color: Colors.red[500],
+          ),
+          Text('41'),
+        ],
+      ),
+    );
+```
+代码解释：
+
+`/*1*/` 把列控件放到`Expanded`控件里面会让列控件占据行里面所有的剩余空间；设置`crossAxisAlignment`属性为`CrossAxisAlignment.start`会把列控件放在行的开头。
+
+`/*2*/` 把第一行文字放到容器控件中可以允许你添加`padding`。列控件的第二个子控件也是文本控件，以灰色显示。
+
+`/*3*/` 文本行的最后两个元素分别是一个红色的星星图标，以及一个标记为41的文字。整个行是一个容器，并且每条边都加上了32个像素的`padding`。
+
+把标题栏添加到应用程序的`body`里面：
+
+```dart
+    return MaterialApp(
+      title: 'Flutter layout Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter layout demo'),
+        ),
+        body: Column(
+          children: <Widget>[titleSection],
+        ),
+      ),
+    );
+```
+
+#### 第3步： 实现按钮行
+
+按钮行包含使用相同布局的三列——一行文字，以及在文字上的一个图标。这一行的所有列都是相同间距，文字和图标都使用主题颜色进行绘制。
+
+既然创建每个列的代码都是几乎相同的，我们可以创建一个帮助函数`buildBottonColumn()`，这个函数接收一个颜色、图片和文字，返回用指定颜色绘制的控件。
+
+```dart
+Column _buildButtonColumn(Color color, IconData icon, String label) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      Icon(icon, color: color,),
+      Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: color,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+```
+这个函数把图标直接添加到列控件中。文字控件位于一个容器中，顶部加上了一个`margin`，把文字和图标分开来。
+
+通过调用这个函数来构造按钮行，行的对齐设置为`MainAxisAlignment.spaceEvenly`，以列前后以及之间的空间相同。
+
+```dart
+    // button section
+    Color color = Theme.of(context).primaryColor;
+    Widget buttonSection = Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _buildButtonColumn(color, Icons.call, 'CALL'),
+          _buildButtonColumn(color, Icons.near_me, 'ROUTE'),
+          _buildButtonColumn(color, Icons.share, 'SHARE'),
+        ],
+      ),
+    );
+```
+
+#### 第4步，实现文本栏
+
+定义一个文本栏的变量，把文本控件放到容器空间内，并在每条边上申明`padding`：
+
+```dart
+    // text section
+    Widget textSection = Container(
+      padding: const EdgeInsets.all(32),
+      child: Text(
+        'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
+        'Alps. Situated 1,578 meters above sea level, it is one of the '
+        'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+        'half-hour walk through pastures and pine forest, leads you to the '
+        'lake, which warms to 20 degrees Celsius in the summer. Activities '
+        'enjoyed here include rowing, and riding the summer toboggan run.',
+        softWrap: true,
+      ),
+    );
+```
+
+通过设置`softWrap`为`true`，单词在超过列宽度时会自动换行。
+
+#### 第5步，实现图片栏
+
+* 创建一个`images`文件夹
+* 添加`lake.jpg`图片
+* 更新`pubspec.yml`文件，添加一个`assets`标签：
+
+```yaml
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - images/lake.jpeg
+```
+
+然后在代码里面引用图片：
+
+```dart
+    return MaterialApp(
+      title: 'Flutter layout Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter layout demo'),
+        ),
+        body: Column(
+          children: <Widget>[
+            Image.asset(
+              'images/lake.jpg',
+              width: 600,
+              height: 240,
+              fit: BoxFit.cover,
+            ),
+            titleSection,
+            buttonSection,
+            textSection,
+          ],
+        ),
+      ),
+    );
+```
+
+`BoxFit.cover`告诉框架图片应该尽可能小，但是必须覆盖整个绘图区域。
+
+#### 第6步，最后的改变
+
+在最后一步里面，把所有元素都放到`ListView`里面去，而不是`Column`控件里。因为`ListView`支持当程序运行在一个小设备中内容可以支持滚动。
+
+```dart
+    return MaterialApp(
+      title: 'Flutter layout Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter layout demo'),
+        ),
+        body: ListView(
+          children: <Widget>[
+            Image.asset(
+              'images/lake.jpg',
+              width: 600,
+              height: 240,
+              fit: BoxFit.cover,
+            ),
+            titleSection,
+            buttonSection,
+            textSection,
+          ],
+        ),
+      ),
+    );
+```
+
+搞定！
+
