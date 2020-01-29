@@ -17,9 +17,10 @@
   - [Loading iOS images in Flutter](#loading-ios-images-in-flutter)
 - [Platform assets](#platform-assets)
   - [Updating the app icon](#updating-the-app-icon)
+    - [Android](#android)
     - [iOS](#ios)
   - [Updating the launch screen](#updating-the-launch-screen)
-    - [Android](#android)
+    - [Android](#android-1)
     - [iOS](#ios-1)
 
 
@@ -220,9 +221,32 @@ There are other occasions to work with assets in the platform projects directly.
 
 ### Updating the app icon
 
+更新`Flutter`应用程序的启动图标和更新原生`Android`和`iOS`程序的启动图标是一样的。
+
+#### Android
+
+在应用程序的根目录，导航到`../android/app/src/main/res`。不同的位图资源目录比如`mipmap-hdpi`等都以及有了占位的图片：`ic_launcher.png`。把这些图片换成你希望的资源文件即可。
+
+> 注意：如果你重命名了`.png`文件，需要更新`AndroidMainfest.xml`文件里，`<application>`标签的`android:icon`属性。
+> 
 #### iOS
+
+在应用程序的根目录，导航到`.../ios/Runnder`。里面的`Assets.xcassets/AppIcon.appiconset`目录已经包含了占位图片。把这些图片换成你希望的资源即可，注意不要更改文件名称。
 
 ### Updating the launch screen
 
+Flutter also uses native platform mechanisms to draw transitional launch screens to your Flutter app while the Flutter framework loads. This launch screen persists until Flutter renders the first frame of your application.
+
 #### Android
+
+若要往应用程序中添加一个`splash screen`，导航到`../android/app/src/main`目录下。在`res/drawable/launch_background.xml`文件里进行配置。默认的模版提供了一个例子，添加一个图片在白色的屏幕中。
+
+更多细节，见[添加一个`splash screen`和一个`launch screen`到`Android`程序中](https://flutter.dev/docs/development/ui/splash-screen/android-splash-screen)
+
+
 #### iOS
+若要添加一个图片到`splash screen`中，导航到`../ios/Runnder`。在`Assets.xcassets/LaunchImage.imageset`里，放入命名为`LaunchImage.png`,`LanuchImage@2x.png`以及`LaunchImage@3x.png`的图片。如果你使用不同的文件名，需要更新在同一个目录下的`Contents.json`文件。
+
+你也可以在Xcode中完全定制化你的启动屏幕，打开`.../ios/Runnder.xcworkspace`, 导航到`Runnder/Runnder`,打开`Assets.xcassets`，并加入图片或者在`LaunchScfreen.storyboard`中做任何你想要做的定制。
+
+![ios-launchscreen-xcode.png](./images/ios-launchscreen-xcode.png)
