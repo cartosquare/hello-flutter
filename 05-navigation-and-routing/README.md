@@ -1,4 +1,22 @@
-# Navigation and routing
+# Navigation and routing <!-- omit in toc -->
+
+## 目录 <!-- omit in toc -->
+- [Navigator class](#navigator-class)
+  - [Using the Navigator](#using-the-navigator)
+    - [Displaying a full-screen route](#displaying-a-full-screen-route)
+    - [Using named navigator routes](#using-named-navigator-routes)
+    - [Routes can return a value](#routes-can-return-a-value)
+    - [Popup routes](#popup-routes)
+    - [Custom routes](#custom-routes)
+    - [Nesting Navigators](#nesting-navigators)
+    - [Real World Example](#real-world-example)
+- [Cookbook Recipes](#cookbook-recipes)
+  - [Navigate to a new screen and back](#navigate-to-a-new-screen-and-back)
+  - [Navigate with named routes](#navigate-with-named-routes)
+  - [Send data to a new screen](#send-data-to-a-new-screen)
+  - [Pass arguments to a named route](#pass-arguments-to-a-named-route)
+  - [Return data from a screen](#return-data-from-a-screen)
+  - [Animating a widget across screens](#animating-a-widget-across-screens)
 
 ## Navigator class
 
@@ -280,3 +298,573 @@ class SignUpPage extends StatelessWidget {
 ```
 
 `Navigator.of`会得到当前`BuildContext`的祖先导航。确保在计划的`Navigator`下提供一个`BuildContext`，特别是在一个很大的`build`函数内部，这里内嵌的导航被创建。`Builder`控件可以被用来获取控件子树中特定位置的`BuildContext`。
+
+## Cookbook Recipes
+### Navigate to a new screen and back
+
+绝大多数应用程序都包含多个页面来展示不同类型的信息。比如，一个应用可能有一个程序来展示商品。当用户点击商品的图片时，会弹出一个新的页面来展示商品的详细信息。
+
+在安卓里，一个路由（`route`）相当于一个活动（`Activity`）。在iOS里，一个路由相当于一个`ViewController`。在`Flutter`里，一个路由就只是一个控件。
+
+使用`Navigator`来导航到一个新的路由。下面的例子使用下面的步骤来在不同的路由之间切换：
+
+1. 创建两个路由
+2. 使用`Navigator.push()`导航到第二个路由
+3. 使用`Navigator.pop()`返回到第一个路由
+
+#### 1. Create two routes <!-- omit in toc -->
+
+首先，创建两个路由。这个简单的例子里，每个路由都只包含两个按钮，点击第一个路由的按钮导航到第二个路由，点击第二个路由的按钮返回到第一个路由。
+
+首先，创建界面结构：
+
+```dart
+class FirstRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('First Route'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('Open route'),
+          onPressed: () {
+            // Navigate to second route when tapped.
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWeidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Route"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            // Navigate back to first route when tapped.
+          },
+          child: Text('Go back!'),
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### 2. Navigate to the second route using Navigator.push() <!-- omit in toc -->
+
+可以使用`Navigator.push()`方法来切换到一个新的路由。那么路由从哪里来呢？你可以创建自己的路由，或是使用`MaterialPageRoute`，后者会使用一个平台相关的动画来进行切换，会很方便。
+
+在第一个路由的`build()`函数里，更新`onPressed()`函数的回调：
+
+```dart
+onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(buidler: (context) => SecondRoute()),
+  );
+}
+```
+
+#### 3. Return to the first route using Navigator.pop() <!-- omit in toc -->
+
+如何关闭第二个路由以返回第一个路由呢？通过使用`Navigator.pop()`方法。这个方法从当前导航条的栈中移除当前路由。
+
+为了实现返回原来路由的功能，在第二个路由中更新`onPressed()`回调：
+
+```dart
+onPressed: () {
+  Navigator.pop(context);
+}
+```
+
+### Navigate with named routes
+
+#### 1. Create two screens <!-- omit in toc -->
+
+```dart
+class FirstScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('First Screen'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('Launch screen'),
+          onPressed: () {
+            // Navigate to the second screen when tapped.
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Screen"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            // Navigate back to first screen when tapped.
+          },
+          child: Text('Go back!'),
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### 2. Define the routes <!-- omit in toc -->
+
+```dart
+MaterialApp(
+  // Start the app with the "/" named route. In this case, the app starts
+  // on the FirstScreen widget.
+  initialRoute: '/',
+  routes: {
+    // When navigating to the "/" route, build the FirstScreen widget.
+    '/': (context) => FirstScreen(),
+    // When navigating to the "/second" route, build the SecondScreen widget.
+    '/second': (context) => SecondScreen(),
+  },
+);
+```
+
+> 警告：`home`属性不能和`initialRoute`属性一起使用。
+
+
+#### 3. Navigate to the second screen <!-- omit in toc -->
+
+```dart
+// Within the `FirstScreen` widget
+onPressed: () {
+  // Navigate to the second screen using a named route.
+  Navigator.pushNamed(context, '/second');
+}
+```
+
+#### 4. Return to the first screen <!-- omit in toc -->
+
+```dart
+// Within the SecondScreen widget
+onPressed: () {
+  // Navigate back to the first screen by popping the current route
+  // off the stack.
+  Navigator.pop(context);
+}
+```
+
+### Send data to a new screen
+
+Often, you not only want to navigate to a new screen, but also pass data to the screen as well. For example, you might want to pass information about the item that’s been tapped.
+
+Remember: Screens are just widgets. In this example, create a list of todos. When a todo is tapped, navigate to a new screen (widget) that displays information about the todo. This recipe uses the following steps:
+
+1. Define a todo class.
+2. Display a list of todos.
+3. Create a detail screen that can display information about a todo.
+4. Navigate and pass data to the detail screen.
+
+
+#### 1. Define a todo class <!-- omit in toc -->
+
+```dart
+class Todo {
+  final String title;
+  final String description;
+
+  Todo(this.title, this.description);
+}
+```
+
+#### 2. Create a list of todos <!-- omit in toc -->
+
+##### Generate the list of todos <!-- omit in toc -->
+
+```dart
+final todos = List<Todo>.generate(
+  20,
+  (i) => Todo(
+    'Todo $i',
+    'A description of what needs to be done for Todo $i',
+  ),
+);
+```
+
+##### Display the list of todos using a ListView <!-- omit in toc -->
+
+```dart
+ListView.builder(
+  itemCount: todos.length,
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text(todos[index].title),
+    );
+  },
+);
+```
+
+#### 3. Create a detail screen to display information about a todo <!-- omit in toc -->
+
+```dart
+class DetailScreen extends StatelessWidget {
+  // Declare a field that holds the Todo.
+  final Todo todo;
+
+  // In the constructor, require a Todo.
+  DetailScreen({Key key, @required this.todo}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the Todo to create the UI.
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(todo.title),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Text(todo.description),
+      ),
+    );
+  }
+}
+```
+
+#### 4. Navigate and pass data to the detail screen <!-- omit in toc -->
+
+```dart
+ListView.builder(
+  itemCount: todos.length,
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text(todos[index].title),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailScreen(todo: todos[index]),
+          ),
+        ),
+      },
+    );
+  }
+)
+```
+
+### Pass arguments to a named route
+
+#### 1. Define the arguments you need to pass <!-- omit in toc -->
+
+```dart
+// You can pass any object to the arguments parameter.
+// In this example, create a class that contains a customizable
+// title and message.
+class ScreenArguments {
+  final String title;
+  final String message;
+
+  ScreenArguments(this.title, this.message);
+}
+```
+#### 2. Create a widget that extracts the arguments <!-- omit in toc -->
+
+下一步，创建一个控件来提取和展示`title`和`message`信息。可以使用`ModalRoute.of()`方法来获取`ScreenArgument`参数，这个函数返回当前路由以及路由参数。
+
+```dart
+// A widget that extracts the necessary arguments from the ModalRoute.
+class ExtractArgumentsScreen extends StatelessWidget {
+  static const routeName = '/extractArguments';
+
+  @override
+  Widget build(BuildContext context) {
+    // Extract the arguments from the current ModalRoute settings
+    // and cast them as ScreenArguments.
+    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(args.title),
+      ),
+      body: Center(
+        child: Text(args.message),
+      ),
+    );
+  }
+}
+```
+
+#### 3. Register the widget in the routes table <!-- omit in toc -->
+
+下面，添加一个路由配置到`MaterialApp`里。路由定义了路由名称和路由对象的匹配。
+
+```dart
+MaterialApp(
+  routes: {
+    ExtractArgumentsScreen.routeName: (context) => ExtractArgumentsScreen(),
+  }
+)
+```
+
+#### 4. Navigate to the widget <!-- omit in toc -->
+
+最后，当用户点击时使用`Navigator.pushNamed()`方法来导航到`ExtractArgumentsScreen`，通过`arguments`属性来传递参数给路由。
+
+```dart
+// A button that navigates to a named route.
+// The named route extracts the arguments by itself.
+RaisedButton(
+  child: Text("Navigate to screen that extracts arguments"),
+  onPressed: () {
+    Navigator.pushNamed(
+      context,
+      ExtractArgumentsScreen.routeName,
+      arguments: ScreenArguments(
+        'Extract Arguments screen',
+        'This message is extracted in the build method.',
+      ),
+    );
+  },
+),
+```
+
+#### Alternatively, extract the arguments using `onGenerateRoute` <!-- omit in toc -->
+
+除了直接在控件内部直接获取参数，你还可以在`onGenerateRoute()`函数里面提取参数，再传递给控件。
+
+```dart
+MaterialApp(
+  // Provide a function to handle named routes.
+  // Use this function to identify the named route being pushed,
+  // and create the correct screen.
+  onGenerateRoute: (settings) {
+    // If you push the PassArguments route
+    if (settings.name == PassArgumentsScreen.routeName) {
+      // Cast the arguments to the corrent type
+      final ScreenArguments args = settings.arguments;
+
+      // Then, extract the required data from the arguements
+      // and pass the data to the correct screen.
+      return MaterialPageRoute(
+        builder: (context) {
+          return PassArgumentsScreen(
+            title: args.title,
+            message: args.message,
+          );
+        },
+      );
+    }
+  },
+);
+```
+
+### Return data from a screen
+
+#### 1. Define the home screen <!-- omit in toc -->
+
+```dart
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Returning Data Demo'),
+      ),
+      // create the selection button widget in the next step.
+      body: Center(child: SelectionButton()),
+    );
+  }
+}
+```
+
+#### 2. Add a button that launches the selection screen <!-- omit in toc -->
+
+```dart
+class SelectionButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      onPressed: () {
+        _navigateAndDisplaySelection(context);
+      },
+      child: Text('Pick an option, any option'),
+    );
+  }
+
+  // A method that launches the SelectionScreen and awaits the 
+  // result from Navigator.pop
+  _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after
+    // calling Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SelectionScreen()),
+    );
+  }
+}
+```
+
+#### 3. Show the selection screen with two buttons <!-- omit in toc -->
+
+```dart
+class SelectionScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pick an option'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RaisedButton(
+                onPressed: () {
+                  // Pop here with "Yep" ...
+                },
+                child: Text('Yep'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RaisedButton(
+                onPressed: () {
+                  // Pop here with "Nope" ...
+                },
+                child: Text('Nope.'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### 4. When a button is tapped, close the selection screen <!-- omit in toc -->
+
+##### Yep button <!-- omit in toc -->
+
+```dart
+RaisedButton(
+  onPressed: () {
+    Navigator.pop(context, 'Yep!');
+  },
+  child: Tet('Yep!'),
+);
+```
+
+##### Nope button <!-- omit in toc -->
+
+```dart
+RaisedButton(
+  onPressed: () {
+    Navigator.pop(context, 'Nope.');
+  },
+  child: Tet('Nope'),
+);
+```
+
+#### 5. Show a snackbar on the home screen with the selection <!-- omit in toc -->
+
+```dart
+_navigateAndDisplaySelection(BuildContext context) async {
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => SelectionScreen()),
+  );
+
+  // After the Selection Screen returns a result, hide any previous snackbars
+  // and show the new result.
+  Scaffold.of(context)
+    ..removeCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text("$result")));
+}
+```
+
+### Animating a widget across screens
+
+#### 1. Create two screens showing the same image <!-- omit in toc -->
+
+```dart
+class MainScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Main Screen'),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            cotext,
+            MaterialPageRoute(
+              builder: (_) {
+                return DetailScreen();
+              },
+            ),
+          );
+        },
+        child: Image.network('https://picsum.photos/250?image=9',),
+      ),
+    );
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Center(
+          child: Image.network('https://picsum.photos/250?image=9'),
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### 2. Add a `Hero` widget to the first screen <!-- omit in toc -->
+
+为了使用一个动画来把两个页面连到一起，把两个页面的图片控件用`Hero`控件包裹起来。这个控件需要两个参数：
+
+`tag`： 一个用来区分`Hero`对象的标签，两个页面上的标签必须一致。
+
+`child`: 在不同页面连接动画的控件。
+
+```dart
+Hero(
+  tag: 'imageHero',
+  child: Image.network('https://pcisum.photos/250?image=9',),
+);
+```
+
+#### 3. Add a `Hero` widget to the second screen <!-- omit in toc -->
+
+```dart
+Hero(
+  tag: 'imageHero',
+  child: Image.network('https://pcisum.photos/250?image=9',),
+);
+```
