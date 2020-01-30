@@ -2,7 +2,7 @@
 
 ## Navigator class
 
-许多应用程序在控件树的顶端又一个导航条，用来展示访问历史，通常最近访问的页面会在之前访问页面之上。使用这个模式可以让导航条从一个页面切换到另一个页面。另外，导航条还可以用来展示一个对话框。
+许多应用程序在控件树的顶端有一个导航条，用来展示访问历史，通常最近访问的页面会在之前访问页面之上。使用这个模式可以让导航条从一个页面切换到另一个页面。另外，导航条还可以用来展示一个对话框。
 
 ### Using the Navigator
 
@@ -164,14 +164,6 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Code Sample for Navigator',
       theme: ThemeData(
         // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       // MaterialApp contains our top-level Navigator
@@ -286,7 +278,5 @@ class SignUpPage extends StatelessWidget {
   }
 }
 ```
-
-Navigator.of operates on the nearest ancestor Navigator from the given BuildContext. Be sure to provide a BuildContext below the intended Navigator, especially in large build methods where nested Navigators are created. The Builder widget can be used to access a BuildContext at a desired location in the widget subtree.
 
 `Navigator.of`会得到当前`BuildContext`的祖先导航。确保在计划的`Navigator`下提供一个`BuildContext`，特别是在一个很大的`build`函数内部，这里内嵌的导航被创建。`Builder`控件可以被用来获取控件子树中特定位置的`BuildContext`。
