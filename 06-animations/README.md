@@ -29,7 +29,20 @@
     - [Tween.animate](#tweenanimate)
   - [Animation notifications](#animation-notifications)
 - [Implicit animations](#implicit-animations)
+  - [Implicit animations codelab](#implicit-animations-codelab)
+    - [What are implicit animations?](#what-are-implicit-animations)
+      - [Example: Fade-in text effect](#example-fade-in-text-effect)
+      - [Example: Shape-shifting effect](#example-shape-shifting-effect)
 - [Hero animations](#hero-animations)
+  - [Basic structure of a hero animation](#basic-structure-of-a-hero-animation)
+  - [Behind the scdenes](#behind-the-scdenes)
+  - [Essential classes](#essential-classes)
+  - [Standard hero animations](#standard-hero-animations)
+    - [PhotoHero class](#photohero-class)
+    - [HeroAnimation class](#heroanimation-class)
+  - [Radial hero animations](#radial-hero-animations)
+    - [Photo class](#photo-class)
+    - [RadialExpansion class](#radialexpansion-class)
 - [Staggered animations](#staggered-animations)
 
 ## Animations overview
@@ -256,7 +269,7 @@ Animation<int> alpha = IntTween(begin: 0, end: 255).animate(controller);
 
 > `animate()`函数返回一个`Animation`对象，而不是`Animatable`。
 
-下面的离职展示了一个控制器，一个曲线、和一个`Tween`:
+下面的例子展示了一个控制器，一个曲线、和一个`Tween`:
 
 ```dart
 AnimationController controller = AnimationController(
@@ -269,10 +282,434 @@ Animation<int> alpha = IntTween(begin: 0, end: 255).animate(curve);
 
 ### Animation notifications
 
-一个`Animation`对象可以有`Listener`和`StatusListener`，在`addListener()`和`addStatusListener()`中定义。当动画值改变的时候，`Listener`就会被调用。。最常见的监听者的行为就是去调用`setState()`函数来触发控件重建。
+一个`Animation`对象可以有`Listener`和`StatusListener`，在`addListener()`和`addStatusListener()`中定义。当动画值改变的时候，`Listener`就会被调用。最常见的监听者的行为就是去调用`setState()`函数来触发控件重建。
 
 ## Implicit animations
 
+使用`Flutter`的动画库，你可以为你的UI控件添加动画、创建视觉效果。动画库的一部分是各种各样的管理动画的控件，这些控件被称为隐式的动画，或者隐式动画控件，因此这些控件都是从`ImplicitlyAnimatedWidget`类实现而来的。下面提供了许多种资源来学习隐式动画控件。
+
+### Implicit animations codelab
+
+这个代码实验室包含下面的材料：
+
+* 使用`AnimatedOpacity`来创建一个淡入的效果
+* 使用`AnimatedContainer`来创建大小、颜色以及边缘留白大小的转换
+* 概述隐性动画控件，以及使用它们的方式
+
+#### What are implicit animations?
+
+在`Flutter`中，有一类的控件可以为你管理动画。这些控件被称为隐式控件。在这些控件里，你可以通过设置一个目标值来动画一个控件的属性；当目标值发生变化时，控件会从旧的值动态改变到新的值。通过这种方式，隐式控件做了控制动画的方方面面和使用方便性的权衡——它们负责管理动画效果，而使用者无需担心。
+
+##### Example: Fade-in text effect
+
+下面的例子显示了如何给现有的界面添加一个淡入效果，通过使用一个叫做`AnimatedOpacity`的隐式动画控件。下面是初始的不带动画的代码，包含
+
+* 一个碗的图片
+* 一个`show details`的按钮，按钮被点击时淡入效果显示描述碗的文字
+
+
+```dart
+import 'package:flutter/material.dart';
+
+const owl_url = 'https://raw.githubusercontent.com/flutter/website/master/src/images/owl.jpg';
+
+class FadeInDemo extends StatefulWidget {
+  _FadeInDemoState createState() => _FadeInDemoState();
+}
+
+class _FadeInDemoState extends State<FadeInDemo> {
+  double opacity = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Image.network(owl_url),
+        MaterialButton(
+          child: Text(
+            'Show details',
+            style: TextStyle(
+              color: Colors.blueAccent,
+            ),
+          ),
+          onPressed: () => setState(() {
+            opacity = 1.0;
+          }),
+        ),
+        AnimatedOpacity(
+          opacity: opacity,
+          duration: const Duration(seconds: 2),
+          child: Column(
+            children: <Widget>[
+              Text('Type: Owl'),
+              Text('Age: 39'),
+              Text('Employment: None'),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(
+          child: FadeInDemo(),
+        ),
+      ),
+    );
+  }
+}
+
+Future<void> main() async {
+  runApp(
+    MyApp(),
+  );
+}
+```
+
+##### Example: Shape-shifting effect
+
+下面的例子展示了如何使用`AnimatedContainer`控件来同时动画多个属性。
+
+```dart
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+const _duration = Duration(milliseconds: 400);
+
+double randomBorderRadius() {
+  return Random().nextDouble() * 64;
+}
+
+double randomMargin() {
+  return Random().nextDouble() * 64;
+}
+
+Color randomColor() {
+  return Color(0xFFFFFFFF & Random().nextInt(0xFFFFFFFF));
+}
+
+class AnimatedContainerDemo extends StatefulWidget {
+  _AnimatedContainerDemoState createState() => _AnimatedContainerDemoState();
+}
+
+class _AnimatedContainerDemoState extends State<AnimatedContainerDemo> {
+  Color color;
+  double borderRadius;
+  double margin;
+
+  @override
+  void initState() {
+    super.initState();
+
+    color = Colors.deepPurple;
+    borderRadius = randomBorderRadius();
+    margin = randomMargin();
+  }
+
+  void change() {
+    setState(() {
+      color = randomColor();
+      borderRadius = randomBorderRadius();
+      margin = randomMargin();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              width: 128,
+              height: 128,
+              child: AnimatedContainer(
+                margin: EdgeInsets.all(margin),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(borderRadius),
+                ),
+                duration: _duration,
+                curve: Curves.easeInOutBack,
+              ),
+            ),
+            MaterialButton(
+              color: Theme.of(context).primaryColor,
+              child: Text(
+                'change',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () => change(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: AnimatedContainerDemo(),
+    );
+  }
+}
+
+Future<void> main() async {
+  runApp(
+    MyApp()
+  ); 
+}
+```
+
 ## Hero animations
+
+你可能已经见过主角动画很多次了。比如，一个展示了很多待售商品的页面，选择一个商品后会进入一个新的页面，包含更详细的信息，以及一个购买的按钮。图片从一个屏幕飞入另一个屏幕就叫做主角动画，尽管同样的动画有时会被称为共享元素转换`shared element transition`。
+
+### Basic structure of a hero animation
+
+主角动画有下面的结构：
+
+1. 定义一个初始的`Hero`控件，叫做`source hero`。这个控件指定它的图形表示（一般是一个图片），以及一个识别的标签。这个控件在`source route`定义的控件树中。
+2. 定义一个结束`Hero`控件，叫做`destination hero`。这个控件也需要指定它的图形表示，以及一个和`source hero`一样的标签。注意，两个`hero`一定要有相同的标签，这个标签通常可以表示底层的数据。为了最好的效果，两个`hero`应该要有相同的虚拟控件树。
+3. 创建一个包含`destination hero`的路由。这个路由定义了动画结束时的控件树。
+4. 通过把`destination route`推入导航中来触发`hero animation`。导航条推入和弹出的操作触发了动画的发生。
+
+`Flutter`会计算动画中主角的边界（对大小和位置进行插值），重叠在一起进行播放。
+
+下一个小节会对`Flutter`执行的过程做详细的描述。
+
+### Behind the scdenes
+
+下面描述了`Flutter`是怎么从一个路由转换到另一个的
+
+![hero-transition-0.png](./images/hero-transition-0.png)
+
+在开始路由切换之前，`source hero`在开始路由中进行等待，结束路由开不存在，`overlay`也不存在。
+
+
+![hero-transition-1.png](./images/hero-transition-1.png)
+
+当把路由推入导航栈中时，触发动画。在t=0.0时，`Flutter`做了下面这些：
+
+* 在屏幕后面计算结束主角的路径。现在`Flutter`知道了主角结束的位置。
+* 把结束主角放到overlay中，位置和大小和初始主角一致。添加一个主角到overlay中改变了它的Z-order，所以它会出现在所有的路由之上。
+
+![hero-transition-2.png](./images/hero-transition-2.png)
+
+当主角进行转换时，它的矩形框使用`Tween<Rect>`进行动画模拟，这个在主角的`createRectTween`属性中进行设置。默认情况下，Flutter使用一个`MaterialRectArcTween`的实例，这个会沿着一个曲线对矩形框的对角顶点进行动画插值。
+
+![hero-transition-3.png](./images/hero-transition-3.png)
+
+当动画结束时：
+
+* Flutter把主角控件从overlay 路由中移到结束路由中。现在overlay路由就变成空的了。
+* 结束主角现在出现在结束路由的最终位置上。
+* 初始主角被恢复到初始路由上。
+
+弹出路由执行的是同样的过程，会把主角动画移动到原始路由里面的位置和大小。
+
+### Essential classes
+
+`Hero`
+
+这个控件从初始路由中转移到结束路由里。
+
+`Inkwell`
+
+定义当用户点击主角时会发生什么。一般会创建一个新的路由并压如导航栈中。
+
+`Navigator`
+
+管理路由栈。从栈中压入或是弹出一个路由会触发动画。
+
+`Route`
+
+定义一个页面。
+
+### Standard hero animations
+
+#### PhotoHero class
+
+自定义的`PhotoHero`类用来管理`hero`以及它的大小、图片和点击的行为。这个类的控件树如下图所示：
+
+![photohero-class.png](./images/photohero-class.png)
+
+下面是代码：
+
+```dart
+class PhotoHero extends StatelessWidget {
+  class PhotoHero({Key key, this.photo, this.onTap, this.width}): super(key: key);
+
+  final String photo;
+  final VoidCallback onTap;
+  final double width;
+
+  Widegt build(BuildContext) {
+    return SizedBox(
+      width: width,
+      child: Hero(
+        tag: photo,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Image.asset(
+              photo,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+关键信息：
+
+* 当主角控件被加入到`MaterialApp`控件的home属性中的时候，初始路由就被隐式地压如导航栈中了。
+* 使用`InkWell`来包裹图片控件，使得对图片添加点击时间变得容易了。
+* 把`Material`控件设置为透明可以让图片在转换时可以从背景中跳出。
+* `SizedBox`类用来指定初始和结束路由中的主角大小。
+* 设置图片的fit属性为`BoxFit.contain`，可以确保图片在动画过程中可以在不改变长宽比的情况下尽可能大。
+
+#### HeroAnimation class
+
+`HeroAnimation`类创建初始和结束路由，并且设置动画。
+
+```dart
+class HeroAnimation extends StatelessWidget {
+  Widget build(BuildContext context) {
+    timeDilation = 5.0; // 1.0 means normal animation speed.
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Basic Hero Animation'),
+      ),
+      body: Center(
+        child: PhotoHero(
+          photo: 'images/flippers-alpha.png',
+          width: 300.0,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Flipper Page'),
+                    ),
+                    body: Container(
+                      color: Colors.lightBlueAccent,
+                      padding: const EdgeInsets.all(16.0),
+                      alignment: Alignment.topLeft,
+                      child: PhotoHero(
+                        photo: 'images/flippers-alpha.png',
+                        width: 100.0,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+关键信息：
+
+* 当用户点击初始主角时，通过`MaterialPageRoute`来创建结束路由，并压入导航栈中
+* 结束路由的`Container`控件把`PhotoHero`控件放置到了左上角。
+* 可以使用`timeDilation`属性在debug的时候把动画减慢。
+
+
+### Radial hero animations
+
+在把一个主角从一个路由转移到另一个路由时，主角的形状从圆形转变为矩形。为了实现这个效果，需要把两种裁剪形状的相交进行动画化：一个圆形、一个方形。在动画进程中，圆形裁剪器（包括图片)的半径从`minRadius`缩放到`maxRadius`，而矩形裁剪器维持大小不变。与此同时，图片从原始路由的位置转换到结束路由的位置。
+
+下面这个图显示了在最开始以及最后的裁剪图片：
+
+![radial-hero-animation.png](./images/radial-hero-animation.png)
+
+#### Photo class
+
+```dart
+class Photo extends StatelessWidget {
+  Photo({ Key key, this.photo, this.color, this.onTap }) : super(key: key);
+
+  final String photo;
+  final Color color;
+  final VoidCallback onTap;
+
+  Widget build(BuildContext context) {
+    return Material(
+      // Slightly opaque color appears where the image has transparency.
+      color: Theme.of(context).primaryColor.withOpacity(0.25),
+      child: InkWell(
+        onTap: onTap,
+        child: Image.asset(
+            photo,
+            fit: BoxFit.contain,
+          )
+      ),
+    );
+  }
+}
+```
+
+#### RadialExpansion class
+
+`RadialExpansion`类的控件树如下：
+
+![radial-expansion-class.png](./images/radial-expansion-class.png)
+
+代码如下：
+
+```dart
+class RadialExpansion extends StatelessWidget {
+  RadialExpansion({
+    Key key,
+    this.maxRadius,
+    this.child,
+  }) : clipRectSize = 2.0 * (maxRadius / math.sqrt2), super(key: key);
+
+  final double maxRadius;
+  final clipRectSize;
+  final Widget child;
+
+  @override
+  Widget build(BuildContex context) {
+    return ClipOval(
+      child: Center(
+        child: SizeBox(
+          width: clipRectSize,
+          height: clipRectSize,
+          child: ClipRect(
+            child: child, // photo
+          ),
+        ),
+      ),
+    );
+  })
+}
+```
 
 ## Staggered animations
