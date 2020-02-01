@@ -16,7 +16,29 @@
       - [Provider.of](#providerof)
   - [List of state management approaches](#list-of-state-management-approaches)
 - [Networking & http](#networking--http)
+  - [Cross-platform http networking](#cross-platform-http-networking)
+  - [Platform notes](#platform-notes)
+    - [Android](#android)
+  - [MacOS](#macos)
+  - [Samples](#samples)
+    - [Fetch data from the internet](#fetch-data-from-the-internet)
+      - [Add the `http` package](#add-the-http-package)
+    - [Parse JSON in the background](#parse-json-in-the-background)
+      - [Move work to a separate isolate](#move-work-to-a-separate-isolate)
 - [JSON and serialization](#json-and-serialization)
+  - [Which JSON serialization nethod is right for me?](#which-json-serialization-nethod-is-right-for-me)
+    - [Use manual serialization for smaller projects](#use-manual-serialization-for-smaller-projects)
+    - [Use code generation for medium to large projects](#use-code-generation-for-medium-to-large-projects)
+  - [Is there a GSON/Jackson/Moshi equivalent in Flutter?](#is-there-a-gsonjacksonmoshi-equivalent-in-flutter)
+  - [Serializing JSON manually using dart:convert](#serializing-json-manually-using-dartconvert)
+    - [Serializing JSON inline](#serializing-json-inline)
+    - [Serializing JSON inside model classes](#serializing-json-inside-model-classes)
+  - [Serializing JSON using code generation libraries](#serializing-json-using-code-generation-libraries)
+    - [Setting up json_serializable in a project](#setting-up-json_serializable-in-a-project)
+    - [Creating model classes the json_serializable way](#creating-model-classes-the-json_serializable-way)
+    - [Running the code generation utility](#running-the-code-generation-utility)
+    - [Consuming json_serializable models](#consuming-json_serializable-models)
+  - [Generating code for nested classes](#generating-code-for-nested-classes)
 - [Firebase](#firebase)
 
 
@@ -296,6 +318,78 @@ see [here](https://flutter.dev/docs/development/data-and-backend/state-mgmt/opti
 
 ## Networking & http
 
+### Cross-platform http networking
+
+使用[`http`](https://pub.dev/packages/http)库。
+
+### Platform notes
+
+#### Android
+安卓应用必须在manifest里面申明互联网的使用：
+
+```xml
+<manifest xlmns:android...>
+ ...
+ <uses-permission android:name="android.permission.INTERNET" />
+ <application ...
+</manifest>
+```
+
+### MacOS
+需要在`macos/Runner/*.entitlements`文件中申明互联网客户端的使用：
+
+```
+<dict>
+	<key>com.apple.security.network.client</key>
+	<true/>
+</dict>
+```
+详见：https://github.com/google/flutter-desktop-embedding/blob/master/macOS-Security.md
+
+### Samples
+#### Fetch data from the internet
+##### Add the `http` package
+在`pubspec.yml`中添加依赖。[http库版本](https://pub.dev/packages/http#-installing-tab-)可以在`pub.dev`中查看。
+
+```
+dependencies:
+  http: <latest_version>
+```
+导入库：
+
+```dart
+import 'package:http/http.dart' as http;
+```
+
+#### Parse JSON in the background
+
+##### Move work to a separate isolate
+
+使用`compute()`方法来在背景线程中执行昂贵的计算。
+
+```dart
+Future<List<Photo>> fetchPhotos(http.client client) async {
+  final response = awit client.get('some-url');
+
+  return  compute(parsePhotos, response.body);
+}
+```
+
 ## JSON and serialization
+
+### Which JSON serialization nethod is right for me?
+#### Use manual serialization for smaller projects
+#### Use code generation for medium to large projects
+### Is there a GSON/Jackson/Moshi equivalent in Flutter?
+### Serializing JSON manually using dart:convert
+#### Serializing JSON inline
+#### Serializing JSON inside model classes
+### Serializing JSON using code generation libraries
+#### Setting up json_serializable in a project
+#### Creating model classes the json_serializable way
+#### Running the code generation utility
+#### Consuming json_serializable models
+### Generating code for nested classes
+
 
 ## Firebase
