@@ -44,6 +44,7 @@
     - [Photo class](#photo-class)
     - [RadialExpansion class](#radialexpansion-class)
 - [Staggered animations](#staggered-animations)
+  - [Basic structuree of a staggered animation](#basic-structuree-of-a-staggered-animation)
 
 ## Animations overview
 
@@ -713,3 +714,48 @@ class RadialExpansion extends StatelessWidget {
 ```
 
 ## Staggered animations
+
+一个`Staggered animations`由一一些动画组合而成。动画之间可以按顺序执行，也可以部分或全部重叠。
+
+### Basic structuree of a staggered animation
+
+> 重点
+> * 所有的动画都被`AnimationController`控制
+> * 不管动画持续多长时间，控制器的值都必须在0.0到1.0之间
+> * 每个单独的动画都有一个在0.0到1.0之间的值
+> * 对于每个要做动画的属性，创建一个`Tween`。这个`Tween`指定了属性的开始和结束值。
+> * `Tween`对象创建一个被动画控制器管理的动画
+
+下面展示了如何对`width`属性创建一个tween。它创建了一个`CurvedAnimation`。
+
+```dart
+width = Tween<double>(
+  begin: 50.0,
+  end 150.0,
+).animate(
+  CurvedAnimation(
+    parent: controller,
+    curve: Interval(
+      0.125, 0.250,
+      curve: Curves.ease,
+    ),
+  ),
+),
+```
+
+开始和结束值不一定要是double数值。下面的代码对`borderRadius`属性创建tween：
+
+```dart
+borderRadius = BorderRadiusTween(
+  begin: BorderRadius.circular(4.0),
+  end: BorderRadius.circular(75.0),
+).animate(
+  CurvedAnimation(
+    parent: controller,
+    curve: Interval(
+      0.375, 0.500,
+      curve: Curves.ease,
+    ),
+  ),
+),
+```
