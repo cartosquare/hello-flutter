@@ -1,21 +1,38 @@
-# Packages & plugins
+# Packages & plugins <!-- omit in toc -->
+
+## 目录 <!-- omit in toc -->
+- [Using packages](#using-packages)
+    - [Searching for package](#searching-for-package)
+    - [Adding a package dependency to an app](#adding-a-package-dependency-to-an-app)
+    - [Conflict resolution](#conflict-resolution)
+  - [Developing new packages](#developing-new-packages)
+    - [Managing package dependencies and versions](#managing-package-dependencies-and-versions)
+      - [Package versions](#package-versions)
+      - [Updating package dependencies](#updating-package-dependencies)
+    - [Dependencies on unpublished packages](#dependencies-on-unpublished-packages)
+- [Developing packages & plugins](#developing-packages--plugins)
+- [Flutter FAvorite program](#flutter-favorite-program)
+- [Background processes](#background-processes)
+- [Android plugin upgrade](#android-plugin-upgrade)
+- [Package site](#package-site)
+
 
 ## Using packages
 
 使用已发布的公开库
 
-### Searching for package
+#### Searching for package
 
 代码库在[pub.dev](https://pub.dev/)
 
-### Adding a package dependency to an app
+#### Adding a package dependency to an app
 
 1. Depend on it
 2. Install it
 3. Import it
 4. Stop and restart the app, if necessary
 
-### Conflict resolution
+#### Conflict resolution
 
 尽量申明兼容的版本号：
 ```dart
@@ -34,13 +51,13 @@ dependency_overrides:
   url_launcher: '0.4.3'
 ```
 
-## Developing new packages
+### Developing new packages
 
-### Managing package dependencies and versions
+#### Managing package dependencies and versions
 
 为了减小版本冲突的风险，尽量`pubspec.yaml`文件中指定一个版本范围。
 
-#### Package versions
+##### Package versions
 
 使用方式：
 
@@ -56,7 +73,7 @@ dependencies:
   collection: '^0.1.2'
 ```
 
-#### Updating package dependencies
+##### Updating package dependencies
 
 使用下面的命令下载：
 
@@ -70,7 +87,7 @@ flutter pub get
 flutter pub upgrade
 ```
 
-### Dependencies on unpublished packages
+#### Dependencies on unpublished packages
 
 几种方式：
 
@@ -100,3 +117,23 @@ dependencies:
       path: packages/package1
 ```
 
+
+## Developing packages & plugins
+
+[TBD]
+
+## Flutter FAvorite program
+
+see `https://pub.dev/flutter/favorites`
+
+## Background processes
+
+[TBD]
+
+## Android plugin upgrade
+
+[TBD]
+
+## Package site
+
+`https://pub.dev/flutter/packages`
