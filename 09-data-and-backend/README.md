@@ -37,9 +37,10 @@
     - [Setting up json_serializable in a project](#setting-up-json_serializable-in-a-project)
     - [Creating model classes the json_serializable way](#creating-model-classes-the-json_serializable-way)
     - [Running the code generation utility](#running-the-code-generation-utility)
+      - [One-time code generation](#one-time-code-generation)
+      - [Generating code continuously](#generating-code-continuously)
     - [Consuming json_serializable models](#consuming-json_serializable-models)
   - [Generating code for nested classes](#generating-code-for-nested-classes)
-- [Firebase](#firebase)
 
 
 ## State management
@@ -378,18 +379,226 @@ Future<List<Photo>> fetchPhotos(http.client client) async {
 ## JSON and serialization
 
 ### Which JSON serialization nethod is right for me?
+有两种策略：
+
+* 手动序列化
+* 使用代码自动序列化
+
 #### Use manual serialization for smaller projects
+手动JSON反序列化可以使用内置的位于`dart:convert`中的decoder。它包括传递原始JSON字符串给`jsonDecode()`函数，然后在返回的`Map<String, dynamic>`对象中查找你要的值。这个方法没有外部的依赖和特殊的设置过程，可以用来快速验证概念。
+
+然而手动的反序列化的效率不是很高，当你的项目变得很大的时候。手动写反序列化的逻辑难以管理，且易于犯错。如果你写错了单词，尝试去获取一个不存在的JSON字段，你的代码将会在运行的时候抛出一个异常。
+
 #### Use code generation for medium to large projects
+
+自动序列化意味着使用一个外部的库来为你生成代码。在做过一些初始设置之后，你从你的模型类中生成一个文件监听器，用来自动生成代码。比如`json_serializable`以及`built_value`都是这样的库。
+
+这种方式可以满足更大的项目使用。不需要手写代码，获取不存在JSON字段的错误可以在编译时就捕捉到。不足之处在于需要额外的初始配置。
+
 ### Is there a GSON/Jackson/Moshi equivalent in Flutter?
+
+简单来说：没有。
+
+dart为了保留优化app体积的特性，不支持运行时反射(`runtime reflection`).
+
 ### Serializing JSON manually using dart:convert
+
+下面是一个JSON的例子
+```dart
+{
+  "name": "John Smith",
+  "email": "john@example.com"
+}
+```
+使用`dart:convert`，你可以使用两种方式来序列化这个JSON。
+
 #### Serializing JSON inline
+
+```dart
+Map<String, dynamic> user = jsonDecode(jsonString);
+
+print('Howdy, ${user['name']}!');
+print('We sent the verifacation link to ${user['email']}.');
+```
+
+不幸的是。 `jsonDecode`这个函数返回一个`Map<String, dynamic>`，也就是说，你直到运行程序的时候才能直到json值的类型。这样你就失去了静态类型语言的特性：类型安全，自动推断以及最重要的，编译时异常捕捉。你的代码会很容易出错。
+
 #### Serializing JSON inside model classes
+
+```dart
+class User {
+  final String name;
+  final String email;
+
+  User(this.name, this.email);
+
+  User.fromJson(Map<String, dynamic> json):
+  name = json['name'],
+  email = json['email'];
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'email'; email,
+  };
+}
+
+Map userMap = jsonDecode(jsonString);
+var user = User.fromJson(userMap);
+
+print('Howdy, ${user.name}!');
+print('We sent the verification link to ${user.email}.');
+```
 ### Serializing JSON using code generation libraries
 #### Setting up json_serializable in a project
+在`pubspec.yaml`文件中指定依赖：
+
+```yaml
+dependencies:
+  json_annotation: ^3.0.0
+
+dev_dependencies:
+  build_runner: ^1.0.0
+  json_serializable: ^3.2.0
+```
+
 #### Creating model classes the json_serializable way
+
+`user.dart`
+```dart
+import 'package:json_annotation/json_annotation.dart';
+
+/// This allows the `User` class to access private members in
+/// the generated file. The value for this is *.g.dart, where
+/// the star denotes the source file name.
+part 'user.g.dart';
+
+/// An annotation for the code generator to know that this class needs the
+/// JSON serialization logic to be generated.
+@JsonSerializable()
+
+class User {
+  User(this.name, this.email);
+
+  String name;
+  String email;
+
+  /// A necessary factory constructor for creating a new User instance
+  /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, User.
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$UserToJson`.
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+```
+
+如果需要，可以自定义命名匹配。比如：
+```dart
+/// Tell json_serializable that "registration_date_millis" should be
+/// mapped to this property.
+@JsonKey(name: 'registration_date_millis')
+final int registrationDateMillis;
+```
 #### Running the code generation utility
+
+第一次创建`json_serializable`类的时候，会出现下面的错误：
+![ide_warning.png](./images/ide_warning.png)
+原因是自动代码没有生成。
+有两种方式可以自动生成代码。
+##### One-time code generation
+执行`flutter pub run build_runner build`
+
+##### Generating code continuously
+启动一个监视器：`flutter pub run build_runner watch`
+
 #### Consuming json_serializable models
+反序列化：
+
+```dart
+Map userMap = jsonDecode(jsonString);
+var user = User.fromJson(userMap);
+```
+
+序列化：
+
+```dart
+String json = jsonEncode(user);
+```
 ### Generating code for nested classes
 
+考虑到下面的`Address`类：
 
-## Firebase
+```dart
+import 'package:json_annotation/json_annotation.dart';
+part 'address.g.dart';
+
+@JsonSerializable()
+class Address {
+  String street;
+  String city;
+
+  Address(this.street, this.city);
+
+  factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
+  Map<String, dynamic> toJson() => _$AddressToJson(this);
+}
+```
+
+这个类内嵌于`User`类内：
+
+```dart
+import 'address.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'user.g.dart';
+
+@JsonSerializable()
+class User {
+  String firstName;
+  Address address;
+
+  User(this.firstName, this.address);
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+```
+执行`flutter pub run build_runner build`会生成`*.g.dart`文件。当你执行下面的代码的时候：
+
+```dart
+Address address = Address("My st.", "New York");
+User user = User("John", address);
+print(user.toJson());
+```
+
+结果是：
+
+```
+{name: John, address: Instance of 'address'}
+```
+
+我们期待的结果是：
+
+```
+{name: John, address: {street: My st., city: New York}}
+```
+
+为了达到这个目的，需要传递`explicitToJson: true`到`@JsonSerializable()`标记内。现在`User`类是这样的：
+
+```dart
+import 'address.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'user.g.dart';
+
+@JsonSerializable(explicitToJson: true)
+class User {
+  String firstName;
+  Address address;
+
+  User(this.firstName, this.address);
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+```
