@@ -6,8 +6,10 @@
 
 一般情况下`ListView`和`GridView`可以对内容进行滚动。但是如果你想要像下面这样的高级滚动特性：
 
-![sliver-demo1.gif](./images/sliver-demo1.gif)
+![sliver-demo1.gif](./images/silver-demo1.gif)
+
 ![sliver-demo2.gif](./images/sliver-demo2.gif)
+
 ![sliver-demo3.gif](./images/sliver-demo3.gif)
 
 就请继续往下看。。。
