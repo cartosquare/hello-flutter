@@ -139,7 +139,7 @@ Future<String> loadAsset() async {
   .../3.0x/my_icon.png
 ```
 
-在设备像素比为1.8的时候，会选择`.../2.0x/my_icon.png`文件。当设备的像素比为2.7的时候，会选择`.../2.0x/my_icon.png`.
+在设备像素比为1.8的时候，会选择`.../2.0x/my_icon.png`文件。当设备的像素比为2.7的时候，会选择`.../2.0x/my_icon.png`.
 
 如果图片的长和宽没有在`Image`控件中指定的时候，图片的分辨率会被用来放缩图片，使得图片可以用来占据和主文件相同大的屏幕控件。也就是说，如果如果`.../my_icon.png`是72px乘72px，那么`.../3.0x/my_icon.png`就应该是216px乘216px；但是如果场合宽如果没有被指定的化，它们都会被渲染成72px乘72px。
 
@@ -184,7 +184,7 @@ Assets used by the package itself should also be fetched using the package argum
 
 #### Bunding of package assets
 
-如果需要的资源文件在`pubspec.yaml`中指定了，可以自动被应用程序打包。特别地，如果资源文件被这个库自己使用，那么必须要子啊`pubspec.yaml`中指定。
+如果需要的资源文件在`pubspec.yaml`中指定了，可以自动被应用程序打包。特别地，如果资源文件被这个库自己使用，那么必须要在`pubspec.yaml`中指定。
 
 一个库可以选择把资源文件放到`lib/`目录下，这样可以不在`pubspec.yaml`中指定。在这种情况下，那些需要被打包的文件，应用程序需要在`pubspec.yaml`中指定哪些需要被包括。比如，一个叫做`fancy_backgrounds`的库可以有下面这些文件：
 
